@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import axios from 'axios'
+import axios from 'axios';
 
-const axiosBaseQuery =
+export const axiosBaseQuery =
     ({ baseUrl } = { baseUrl: '' }) =>
         async ({ url, method, data, params }) => {
             try {
@@ -18,9 +18,9 @@ const axiosBaseQuery =
             }
         }
 
-export const contactsApi = createApi({
+const contactsApi = createApi({
     reducerPath: 'contactsApi',
-    baseQuery: axiosBaseQuery({ baseUrl: 'https://645897178badff578ef539ed.mockapi.io' }),
+    baseQuery: axiosBaseQuery(),
     tagTypes: ['Contacts'],
     endpoints: (builder) => ({
         fetchContacts: builder.query({
@@ -28,6 +28,7 @@ export const contactsApi = createApi({
                 url: "/contacts",
                 method: 'GET',
             }),
+            
             providesTags: (result) => (result
                 ? [...result.map(({ id }) => ({ type: 'Contacts', id })), { type: 'Contacts', id: 'LIST' }]
                 : [{ type: 'Contacts', id: 'LIST' }]),
@@ -52,5 +53,5 @@ export const contactsApi = createApi({
     }),
 })
 
-
+export default contactsApi;
 export const { useFetchContactsQuery, useAddContactMutation, useDeleteContactMutation } = contactsApi

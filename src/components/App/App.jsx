@@ -1,18 +1,49 @@
-import { ContactForm } from 'components/ContactForm/ContactForm';
-import { ContactList } from 'components/ContactList/ContactList';
-import { Filter } from 'components/Filter/Filter';
-
-import { AppTitle, SectionTitle, Wrapper } from './App.styled';
+import { Route, Routes } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useAuth } from 'hooks/useAuth';
+import { refreshUser } from 'redux/authOperations';
+import { PrivateRoute, RestrictedRoute } from 'components/Routes';
+import { LoginPage, RegisterPage, ContactsPage } from 'pages';
+import { SharedLayout } from 'components/SharedLayout/SharedLayout';
+import { Navigate } from 'react-router-dom';
 
 export const App = () => {
-  return (
-    <Wrapper>
-      <AppTitle>Phonebook</AppTitle>
-      <SectionTitle>Add new contact</SectionTitle>
-      <ContactForm />
-      <SectionTitle>Contacts</SectionTitle>
-      <Filter />
-      <ContactList />
-    </Wrapper>
+  const dispatch = useDispatch();
+  const { isRefreshing } = useAuth();
+
+  useEffect(() => {
+    dispatch(refreshUser());
+  }, [dispatch]);
+
+  return isRefreshing ? (
+    <b>Refreshing user...</b>
+  ) : (
+    <Routes>
+      <Route path="/" element={<SharedLayout />}>
+        <Route
+          path="/register"
+          element={
+            <RestrictedRoute
+              redirectTo="/contacts"
+              component={<RegisterPage />}
+            />
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <RestrictedRoute redirectTo="/contacts" component={<LoginPage />} />
+          }
+        />
+        <Route
+          path="/contacts"
+          element={
+            <PrivateRoute redirectTo="/login" component={<ContactsPage />} />
+          }
+        />
+      </Route>
+      <Route path="*" element={<Navigate to={'/contacts'} />} />
+    </Routes>
   );
 };
