@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 import { Report } from 'notiflix/build/notiflix-report-aio';
 
@@ -7,8 +8,6 @@ import {
   useAddContactMutation,
   useFetchContactsQuery,
 } from 'redux/contactsApi';
-
-// import { Form, Label, Input, Button } from './ContactForm.styled';
 
 import { Box, TextField, Button, Container, Avatar } from '@mui/material';
 
@@ -47,11 +46,8 @@ export const ContactForm = () => {
       contact => contact.name.toLowerCase() === name.toLowerCase()
     );
     if (isExists) {
-      return Report.info(
-        'Enter correct information',
-        `${name} is already in contacts`,
-        'Ok'
-      );
+      enqueueSnackbar(`${name} is already in contacts`, { variant: 'warning' });
+      return;
     }
     addContact({ name, number });
 

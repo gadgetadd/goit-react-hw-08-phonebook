@@ -8,6 +8,7 @@ import { LoginPage, RegisterPage, ContactsPage } from 'pages';
 import { SharedLayout } from 'components/SharedLayout/SharedLayout';
 import { Navigate } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
+import { SnackbarProvider} from 'notistack';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ export const App = () => {
   return (
     <>
       <CssBaseline />
+      <SnackbarProvider />
       {isRefreshing ? (
         <b>Refreshing user...</b>
       ) : (

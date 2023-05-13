@@ -8,7 +8,9 @@ import {
   ListItemText,
   ListItemButton,
   Box,
+  CircularProgress,
 } from '@mui/material';
+
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -29,13 +31,14 @@ export const ContactItem = ({ name, number, id }) => {
           >
             <EditIcon />
           </IconButton>
+
           <IconButton
             edge="end"
             aria-label="delete"
             disabled={isLoading}
             onClick={() => deleteContact(id)}
           >
-            <DeleteIcon />
+            {isLoading ? <CircularProgress size={24} /> : <DeleteIcon />}
           </IconButton>
         </Box>
       }
