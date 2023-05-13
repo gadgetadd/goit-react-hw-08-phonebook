@@ -1,19 +1,38 @@
+import { useState } from 'react';
+import { Fab, Drawer, Typography, Container } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+
+import { useFetchContactsQuery } from 'redux/contactsApi';
+
 import { ContactForm } from 'components/ContactForm/ContactForm';
 import { ContactList } from 'components/ContactList/ContactList';
 import { Filter } from 'components/Filter/Filter';
-import { Fab, Drawer, Typography, Container } from '@mui/material';
+import { Loader } from 'components/Loader/Loader';
 
-import AddIcon from '@mui/icons-material/Add';
-import { useState } from 'react';
 export const ContactsPage = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const { data = [], isError, isLoading } = useFetchContactsQuery();
   return (
-    <Container component="main" >
-      <Typography align="center" component="h1" variant="h2">
-        Contacts
-      </Typography>
-      <Filter />
-      <ContactList />
+    <Container component="main">
+      {isLoading && <Loader />}
+      {/* {isError && (
+        <Error>{'Something went wrong. Please, reload the page'}</Error>
+      )} */}
+      {data.length !== 0 ? (
+        <>
+          <Typography align="center" component="h1" variant="h4">
+            Contacts
+          </Typography>
+          <Filter />
+          <ContactList />
+        </>
+      ) : (
+        <Typography sx={{ mt: 4 }} align="center" variant="h5" paragraph>
+          Your phone book is empty. Please click the button in the lower right
+          corner and add new contacts.
+        </Typography>
+      )}
+
       <Drawer
         anchor={'bottom'}
         open={isDrawerOpen}

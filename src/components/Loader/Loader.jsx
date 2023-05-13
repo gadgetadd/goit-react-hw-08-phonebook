@@ -1,11 +1,13 @@
-import { BeatLoader } from 'react-spinners';
-
-import { Wrapper } from './Loader.styled';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export const Loader = () => {
   return (
-    <Wrapper>
-      <BeatLoader color="#4c93f099" size="25px" />
-    </Wrapper>
+    <Backdrop
+      open
+      sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
+    >
+      <CircularProgress color="inherit" />
+    </Backdrop>
   );
 };

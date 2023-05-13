@@ -20,10 +20,10 @@ export const AuthNav = () => {
         aria-label="text button group"
       >
         <Button component={Link} to="/register">
-          Register
+          Sign Up
         </Button>
         <Button component={Link} to="/login">
-          Log In
+          Sign In
         </Button>
       </ButtonGroup>
     </Box>

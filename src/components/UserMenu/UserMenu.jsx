@@ -2,8 +2,14 @@ import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { logOut } from 'redux/authOperations';
 import { useAuth } from 'hooks/useAuth';
-import { Typography, IconButton, Menu, MenuItem } from '@mui/material';
-import { AccountCircle } from '@mui/icons-material';
+import {
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+} from '@mui/material';
+import { AccountCircle, Logout } from '@mui/icons-material';
 
 export const UserMenu = () => {
   const dispatch = useDispatch();
@@ -35,7 +41,7 @@ export const UserMenu = () => {
         id="menu-appbar"
         anchorEl={anchorEl}
         anchorOrigin={{
-          vertical: 'top',
+          vertical: 'bottom',
           horizontal: 'right',
         }}
         keepMounted
@@ -46,7 +52,12 @@ export const UserMenu = () => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => dispatch(logOut())}>Log Out</MenuItem>
+        <MenuItem onClick={() => dispatch(logOut())}>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
       </Menu>
     </>
   );
