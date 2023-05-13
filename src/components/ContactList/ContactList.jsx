@@ -4,10 +4,10 @@ import { useFetchContactsQuery } from 'redux/contactsApi';
 import { selectFilter } from 'redux/selectors';
 
 import { ContactItem } from 'components/ContactItem/ContactItem';
-import { List, Error } from './ContactList.styled';
+import { Error } from './ContactList.styled';
 import { EmptyListIcon } from 'components/EmptyListIcon/EmptyListIcon';
 import { Loader } from 'components/Loader/Loader';
-
+import { List } from '@mui/material';
 export const ContactList = () => {
   const { data = [], isError, isLoading } = useFetchContactsQuery();
 
@@ -22,7 +22,9 @@ export const ContactList = () => {
   return (
     <>
       {isLoading && <Loader />}
-      {isError && <Error>{'Something went wrong. Please, reload the page'}</Error>}
+      {isError && (
+        <Error>{'Something went wrong. Please, reload the page'}</Error>
+      )}
       {IsEmpty ? (
         <EmptyListIcon />
       ) : (
