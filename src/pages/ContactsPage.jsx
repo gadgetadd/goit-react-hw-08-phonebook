@@ -40,11 +40,11 @@ export const ContactsPage = () => {
         open={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
       >
-        <ContactForm />
+        <ContactForm onSuccess={() => setDrawerOpen(false)} />
       </Drawer>
       <Fab
         sx={{
-          position: 'absolute',
+          position: 'fixed',
           bottom: 16,
           right: 16,
         }}

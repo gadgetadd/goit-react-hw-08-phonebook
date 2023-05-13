@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { enqueueSnackbar } from 'notistack';
 
 import {
   ListItem,
@@ -36,7 +37,19 @@ export const ContactItem = ({ name, number, id }) => {
             edge="end"
             aria-label="delete"
             disabled={isLoading}
-            onClick={() => deleteContact(id)}
+            onClick={() =>
+              deleteContact(id)
+                .then(({ data }) => {
+                  enqueueSnackbar(`Contact ${data.name} deleted`, {
+                    variant: 'success',
+                  });
+                })
+                .catch(() =>
+                  enqueueSnackbar('Something went wrong', {
+                    variant: 'error',
+                  })
+                )
+            }
           >
             {isLoading ? <CircularProgress size={24} /> : <DeleteIcon />}
           </IconButton>

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 
@@ -9,14 +10,21 @@ import {
   useFetchContactsQuery,
 } from 'redux/contactsApi';
 
-import { Box, TextField, Button, Container, Avatar } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Button,
+  Container,
+  Avatar,
+  CircularProgress,
+} from '@mui/material';
 
-export const ContactForm = () => {
+export const ContactForm = ({ onSuccess }) => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const [isValid, setValid] = useState({ name: true, number: true });
   const { data: contacts } = useFetchContactsQuery();
-  const [addContact] = useAddContactMutation();
+  const [addContact, { isLoading }] = useAddContactMutation();
 
   const nameSchema = string()
     .matches(/^[a-zA-Zа-яіїєґА-ЯІЇЄҐ]+([' -][a-zA-Zа-яіїєґА-ЯІЇЄҐ]*)*$/)
@@ -28,10 +36,7 @@ export const ContactForm = () => {
     )
     .max(20);
 
-  const formReset = () => {
-    setName('');
-    setNumber('');
-  };
+
 
   const inputChangeHandler = e => {
     const { name, value } = e.currentTarget;
@@ -41,7 +46,7 @@ export const ContactForm = () => {
           .validate(value)
           .then(() => setValid(prev => ({ ...prev, name: true })))
           .catch(() => setValid(prev => ({ ...prev, name: false })));
-        console.log(isValid);
+
         setName(value);
         break;
       case 'number':
@@ -49,7 +54,7 @@ export const ContactForm = () => {
           .validate(value)
           .then(() => setValid(prev => ({ ...prev, number: true })))
           .catch(() => setValid(prev => ({ ...prev, number: false })));
-        console.log(isValid);
+
         setNumber(value);
         break;
       default:
@@ -66,21 +71,37 @@ export const ContactForm = () => {
     const isExists = contacts.some(
       contact => contact.name.toLowerCase() === name.toLowerCase()
     );
-    const isContactValid = isValid.name && isValid.number;
+
     if (isExists) {
       enqueueSnackbar(`${name} is already in contacts`, { variant: 'warning' });
       return;
     }
-    if (!isContactValid) {
-      enqueueSnackbar(`${name} is already in contacts`, {
+    if (!isValid.name) {
+      enqueueSnackbar('Please enter the correct name', {
         variant: 'error',
       });
       return;
     }
-    addContact({ name, number });
+    if (!isValid.number) {
+      enqueueSnackbar('Please enter the correct number', {
+        variant: 'error',
+      });
+      return;
+    }
+    addContact({ name, number })
+      .then(({ data }) => {
+        onSuccess();
+        enqueueSnackbar(`Contact ${data.name} added`, {
+          variant: 'success',
+        });
+      })
+      .catch(() =>
+        enqueueSnackbar('Something went wrong', {
+          variant: 'error',
+        })
+      );
 
-    formReset();
-  };
+      };
 
   return (
     <Container maxWidth="xs" sx={{ my: 4 }}>
@@ -92,7 +113,12 @@ export const ContactForm = () => {
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <ContactPageIcon />
+          {' '}
+          {isLoading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            <ContactPageIcon />
+          )}
         </Avatar>
         <Box
           sx={{ textAlign: 'center' }}
@@ -112,7 +138,6 @@ export const ContactForm = () => {
             autoFocus
             onChange={inputChangeHandler}
           />
-
           <TextField
             fullWidth
             margin="normal"
@@ -125,12 +150,20 @@ export const ContactForm = () => {
             required
             onChange={inputChangeHandler}
           />
-
-          <Button sx={{ mt: 2 }} variant="contained" type="submit">
+          <Button
+            sx={{ mt: 2 }}
+            variant="contained"
+            type="submit"
+            disabled={isLoading}
+          >
             Add new contact
           </Button>
         </Box>
       </Box>
     </Container>
   );
+};
+
+ContactForm.propTypes = {
+  onSuccess: PropTypes.func.isRequired,
 };
