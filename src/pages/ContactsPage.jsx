@@ -15,9 +15,11 @@ export const ContactsPage = () => {
   return (
     <Container component="main">
       {isLoading && <Loader />}
-      {/* {isError && (
-        <Error>{'Something went wrong. Please, reload the page'}</Error>
-      )} */}
+      {isError && (
+        <Typography>
+          {'Something went wrong. Please, reload the page'}
+        </Typography>
+      )}
       {data.length !== 0 ? (
         <>
           <Typography align="center" component="h1" variant="h4">
