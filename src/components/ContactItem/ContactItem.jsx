@@ -19,7 +19,7 @@ export const ContactItem = ({ name, number, id }) => {
 
   return (
     <ListItem
-      sx={{ pr: '96px' }}
+      sx={{ pr: '96px', pl: 0 }}
       secondaryAction={
         <Box sx={{ display: 'flex', gap: '10px' }}>
           <IconButton
@@ -40,7 +40,7 @@ export const ContactItem = ({ name, number, id }) => {
         </Box>
       }
     >
-      <ListItemButton href={`tel:${number}`}>
+      <ListItemButton href={`tel:${number}`} sx={{ p: 0 }}>
         <ListItemAvatar>
           <Avatar>
             <ContactPhoneIcon />
