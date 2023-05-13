@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 
-import { Report } from 'notiflix/build/notiflix-report-aio';
+import { string } from 'yup';
 
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 import {
@@ -14,8 +14,19 @@ import { Box, TextField, Button, Container, Avatar } from '@mui/material';
 export const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const [isValid, setValid] = useState({ name: true, number: true });
   const { data: contacts } = useFetchContactsQuery();
   const [addContact] = useAddContactMutation();
+
+  const nameSchema = string()
+    .matches(/^[a-zA-Zа-яіїєґА-ЯІЇЄҐ]+([' -][a-zA-Zа-яіїєґА-ЯІЇЄҐ]*)*$/)
+    .max(35);
+
+  const numberSchema = string()
+    .matches(
+      /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/
+    )
+    .max(20);
 
   const formReset = () => {
     setName('');
@@ -26,9 +37,19 @@ export const ContactForm = () => {
     const { name, value } = e.currentTarget;
     switch (name) {
       case 'name':
+        nameSchema
+          .validate(value)
+          .then(() => setValid(prev => ({ ...prev, name: true })))
+          .catch(() => setValid(prev => ({ ...prev, name: false })));
+        console.log(isValid);
         setName(value);
         break;
       case 'number':
+        numberSchema
+          .validate(value)
+          .then(() => setValid(prev => ({ ...prev, number: true })))
+          .catch(() => setValid(prev => ({ ...prev, number: false })));
+        console.log(isValid);
         setNumber(value);
         break;
       default:
@@ -45,8 +66,15 @@ export const ContactForm = () => {
     const isExists = contacts.some(
       contact => contact.name.toLowerCase() === name.toLowerCase()
     );
+    const isContactValid = isValid.name && isValid.number;
     if (isExists) {
       enqueueSnackbar(`${name} is already in contacts`, { variant: 'warning' });
+      return;
+    }
+    if (!isContactValid) {
+      enqueueSnackbar(`${name} is already in contacts`, {
+        variant: 'error',
+      });
       return;
     }
     addContact({ name, number });
@@ -78,8 +106,7 @@ export const ContactForm = () => {
             type="text"
             name="name"
             value={name}
-            pattern="^[a-zA-Zа-яіїєґА-ЯІЇЄҐ]+(([' -][a-zA-Zа-яіїєґА-ЯІЇЄҐ ])?[a-zA-Zа-яіїєґА-ЯІЇЄҐ]*)*$"
-            maxLength={35}
+            error={!isValid.name}
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required
             autoFocus
@@ -93,8 +120,7 @@ export const ContactForm = () => {
             type="tel"
             name="number"
             value={number}
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            maxLength={35}
+            error={!isValid.number}
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
             onChange={inputChangeHandler}
