@@ -24,7 +24,7 @@ import { useAuth } from 'hooks/useAuth';
 export default function RegisterPage() {
   const { error, isAuth } = useAuth();
   const [isValid, setValid] = useState({
-    firsName: true,
+    firstName: true,
     lastName: true,
     email: true,
     password: true,
@@ -34,7 +34,7 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  console.log(isValid);
   const nameSchema = string()
     .matches(/^[a-zA-Zа-яіїєґА-ЯІЇЄҐ]+([' -][a-zA-Zа-яіїєґА-ЯІЇЄҐ]*)*$/)
     .max(35);
@@ -211,4 +211,4 @@ export default function RegisterPage() {
       )}
     </Container>
   );
-};
+}
