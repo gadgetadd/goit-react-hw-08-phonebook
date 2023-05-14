@@ -95,16 +95,16 @@ export default function ContactForm() {
       });
       return;
     }
+    const isExists = contacts.some(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+    if (isExists) {
+      enqueueSnackbar(`${name} is already in contacts`, {
+        variant: 'warning',
+      });
+      return;
+    }
     if (drawerVariant === formVariant.new) {
-      const isExists = contacts.some(
-        contact => contact.name.toLowerCase() === name.toLowerCase()
-      );
-      if (isExists) {
-        enqueueSnackbar(`${name} is already in contacts`, {
-          variant: 'warning',
-        });
-        return;
-      }
       addContact({ name, number })
         .then(({ data }) => {
           dispatch(closeDrawer());
