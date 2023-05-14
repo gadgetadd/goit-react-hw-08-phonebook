@@ -1,5 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { logOut } from 'redux/authOperations';
 import { useAuth } from 'hooks/useAuth';
 import {
@@ -14,6 +15,7 @@ import { AccountCircle, Logout } from '@mui/icons-material';
 export const UserMenu = () => {
   const dispatch = useDispatch();
   const { user } = useAuth();
+  const isMobile = useMediaQuery('(man-width:600px)');
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenu = event => {
@@ -26,7 +28,7 @@ export const UserMenu = () => {
 
   return (
     <>
-      <Typography>Welcome, {user.name}</Typography>
+      <Typography>{`${isMobile ? '' : 'Welcome, '}${user.name}`}</Typography>
       <IconButton
         size="large"
         aria-label="account of current user"

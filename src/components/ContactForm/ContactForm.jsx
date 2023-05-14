@@ -1,12 +1,14 @@
-import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { closeDrawer } from 'redux/drawerSlice';
 import { string } from 'yup';
-
+import { selectDrawerVariant, selectIdToEdit } from 'redux/selectors';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   useAddContactMutation,
+  useEditContactMutation,
   useFetchContactsQuery,
 } from 'redux/contactsApi';
 
@@ -19,12 +21,31 @@ import {
   CircularProgress,
 } from '@mui/material';
 
-export const ContactForm = ({ onSuccess }) => {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+export const ContactForm = () => {
+  const drawerVariant = useSelector(selectDrawerVariant);
+  const contactId = useSelector(selectIdToEdit);
+
   const [isValid, setValid] = useState({ name: true, number: true });
   const { data: contacts } = useFetchContactsQuery();
-  const [addContact, { isLoading }] = useAddContactMutation();
+  const [addContact, { isLoading: isAdding }] = useAddContactMutation();
+  const [editContact, { isLoading: isEditing }] = useEditContactMutation();
+  const isLoading = isAdding || isEditing;
+  const dispatch = useDispatch();
+
+
+  const findContact = contactId => contacts.find(({ id }) => id === contactId);
+
+  const [name, setName] = useState(
+    contactId ? findContact(contactId).name : ''
+  );
+  const [number, setNumber] = useState(
+    contactId ? findContact(contactId).number : ''
+  );
+
+  const formVariant = {
+    new: 'new',
+    edit: 'edit',
+  };
 
   const nameSchema = string()
     .matches(/^[a-zA-Zа-яіїєґА-ЯІЇЄҐ]+([' -][a-zA-Zа-яіїєґА-ЯІЇЄҐ]*)*$/)
@@ -35,8 +56,6 @@ export const ContactForm = ({ onSuccess }) => {
       /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/
     )
     .max(20);
-
-
 
   const inputChangeHandler = e => {
     const { name, value } = e.currentTarget;
@@ -68,14 +87,6 @@ export const ContactForm = ({ onSuccess }) => {
       name: { value: name },
       number: { value: number },
     } = e.currentTarget.elements;
-    const isExists = contacts.some(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
-    );
-
-    if (isExists) {
-      enqueueSnackbar(`${name} is already in contacts`, { variant: 'warning' });
-      return;
-    }
     if (!isValid.name) {
       enqueueSnackbar('Please enter the correct name', {
         variant: 'error',
@@ -88,20 +99,44 @@ export const ContactForm = ({ onSuccess }) => {
       });
       return;
     }
-    addContact({ name, number })
-      .then(({ data }) => {
-        onSuccess();
-        enqueueSnackbar(`Contact ${data.name} added`, {
-          variant: 'success',
-        });
-      })
-      .catch(() =>
-        enqueueSnackbar('Something went wrong', {
-          variant: 'error',
-        })
+    if (drawerVariant === formVariant.new) {
+      const isExists = contacts.some(
+        contact => contact.name.toLowerCase() === name.toLowerCase()
       );
-
-      };
+      if (isExists) {
+        enqueueSnackbar(`${name} is already in contacts`, {
+          variant: 'warning',
+        });
+        return;
+      }
+      addContact({ name, number })
+        .then(({ data }) => {
+          dispatch(closeDrawer());
+          enqueueSnackbar(`Contact ${data.name} added`, {
+            variant: 'success',
+          });
+        })
+        .catch(() =>
+          enqueueSnackbar('Something went wrong', {
+            variant: 'error',
+          })
+        );
+    }
+    if (drawerVariant === formVariant.edit) {
+      editContact([contactId, { name, number }])
+        .then(({ data }) => {
+          dispatch(closeDrawer());
+          enqueueSnackbar(`Contact ${data.name} edited`, {
+            variant: 'success',
+          });
+        })
+        .catch(() =>
+          enqueueSnackbar('Something went wrong', {
+            variant: 'error',
+          })
+        );
+    }
+  };
 
   return (
     <Container maxWidth="xs" sx={{ my: 4 }}>
@@ -113,11 +148,12 @@ export const ContactForm = ({ onSuccess }) => {
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          {' '}
           {isLoading ? (
             <CircularProgress size={24} color="inherit" />
-          ) : (
+          ) : drawerVariant === formVariant.new ? (
             <ContactPageIcon />
+          ) : (
+            <EditIcon />
           )}
         </Avatar>
         <Box
@@ -151,19 +187,18 @@ export const ContactForm = ({ onSuccess }) => {
             onChange={inputChangeHandler}
           />
           <Button
-            sx={{ mt: 2 }}
-            variant="contained"
             type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
             disabled={isLoading}
           >
-            Add new contact
+            {drawerVariant === formVariant.new
+              ? 'Add new contact'
+              : 'Save contact'}
           </Button>
         </Box>
       </Box>
     </Container>
   );
-};
-
-ContactForm.propTypes = {
-  onSuccess: PropTypes.func.isRequired,
 };

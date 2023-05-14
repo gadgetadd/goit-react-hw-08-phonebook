@@ -1,17 +1,21 @@
-import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Fab, Drawer, Typography, Container } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 import { useFetchContactsQuery } from 'redux/contactsApi';
-
+import { selectisDrawerOpen } from 'redux/selectors';
+import { openDrawerNew, closeDrawer } from 'redux/drawerSlice';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { ContactForm } from 'components/ContactForm/ContactForm';
 import { ContactList } from 'components/ContactList/ContactList';
 import { Filter } from 'components/Filter/Filter';
 import { Loader } from 'components/Loader/Loader';
 
 export const ContactsPage = () => {
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const isDrawerOpen = useSelector(selectisDrawerOpen);
+  const dispatch = useDispatch();
   const { data = [], isError, isLoading } = useFetchContactsQuery();
+  const isMobile = useMediaQuery('(man-width:600px)');
   return (
     <Container component="main">
       {isLoading && <Loader />}
@@ -36,11 +40,11 @@ export const ContactsPage = () => {
       )}
 
       <Drawer
-        anchor={'bottom'}
+        anchor={isMobile ? 'top' : 'bottom'}
         open={isDrawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => dispatch(closeDrawer())}
       >
-        <ContactForm onSuccess={() => setDrawerOpen(false)} />
+        <ContactForm />
       </Drawer>
       <Fab
         sx={{
@@ -50,7 +54,7 @@ export const ContactsPage = () => {
         }}
         color="primary"
         aria-label="add"
-        onClick={() => setDrawerOpen(true)}
+        onClick={() => dispatch(openDrawerNew())}
       >
         <AddIcon />
       </Fab>

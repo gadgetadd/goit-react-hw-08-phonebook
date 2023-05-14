@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import { enqueueSnackbar } from 'notistack';
+import { useDispatch } from 'react-redux';
+import { openDrawerEdit } from 'redux/drawerSlice';
 
 import {
   ListItem,
@@ -19,7 +21,7 @@ import { useDeleteContactMutation } from 'redux/contactsApi';
 
 export const ContactItem = ({ name, number, id }) => {
   const [deleteContact, { isLoading }] = useDeleteContactMutation();
-
+  const dispatch = useDispatch();
   return (
     <ListItem
       sx={{ pr: '96px', pl: 0 }}
@@ -27,8 +29,7 @@ export const ContactItem = ({ name, number, id }) => {
         <Box sx={{ display: 'flex', gap: '10px' }}>
           <IconButton
             aria-label="edit"
-            // disabled={isLoading}
-            // onClick={() => deleteContact(id)}
+            onClick={() => dispatch(openDrawerEdit(id))}
           >
             <EditIcon />
           </IconButton>

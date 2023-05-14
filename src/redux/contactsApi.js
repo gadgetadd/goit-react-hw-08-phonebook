@@ -28,7 +28,7 @@ const contactsApi = createApi({
                 url: "/contacts",
                 method: 'GET',
             }),
-            
+
             providesTags: (result) => (result
                 ? [...result.map(({ id }) => ({ type: 'Contacts', id })), { type: 'Contacts', id: 'LIST' }]
                 : [{ type: 'Contacts', id: 'LIST' }]),
@@ -37,6 +37,15 @@ const contactsApi = createApi({
             query: (data) => ({
                 url: "/contacts",
                 method: 'POST',
+                data,
+            })
+            ,
+            invalidatesTags: [{ type: 'Contacts', id: 'LIST' }],
+        }),
+        editContact: builder.mutation({
+            query: ([id, data]) => ({
+                url: `/contacts/${id}`,
+                method: 'PATCH',
                 data,
             })
             ,
@@ -54,4 +63,4 @@ const contactsApi = createApi({
 })
 
 export default contactsApi;
-export const { useFetchContactsQuery, useAddContactMutation, useDeleteContactMutation } = contactsApi
+export const { useFetchContactsQuery, useAddContactMutation, useDeleteContactMutation, useEditContactMutation } = contactsApi
