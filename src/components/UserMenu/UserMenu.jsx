@@ -15,7 +15,7 @@ import { AccountCircle, Logout } from '@mui/icons-material';
 export const UserMenu = () => {
   const dispatch = useDispatch();
   const { user } = useAuth();
-  const isMobile = useMediaQuery('(man-width:600px)');
+  const isMobile = useMediaQuery('(max-width:768px)');
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenu = event => {

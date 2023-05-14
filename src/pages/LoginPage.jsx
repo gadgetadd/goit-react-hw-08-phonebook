@@ -1,6 +1,9 @@
-
 import { logIn } from 'redux/authOperations';
+import { string } from 'yup';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { enqueueSnackbar } from 'notistack';
+
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import {
   Container,
@@ -11,13 +14,58 @@ import {
   Button,
   Grid,
   Link,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import { Link as RouteLink } from 'react-router-dom';
+import { useAuth } from 'hooks/useAuth';
 
 export const LoginPage = () => {
+  const { error, isAuth } = useAuth();
+  const [isValid, setValid] = useState({ email: true, password: true });
   const dispatch = useDispatch();
-  const handleSubmit = e => {
-    e.preventDefault();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const emailSchema = string().email();
+
+  const passwordSchema = string().matches(/^.{8,}$/);
+
+  const inputChangeHandler = e => {
+    const { name, value } = e.currentTarget;
+    switch (name) {
+      case 'email':
+        emailSchema
+          .validate(value)
+          .then(() => setValid(prev => ({ ...prev, email: true })))
+          .catch(() => setValid(prev => ({ ...prev, email: false })));
+        setEmail(value);
+        break;
+      case 'password':
+        passwordSchema
+          .validate(value)
+          .then(() => setValid(prev => ({ ...prev, password: true })))
+          .catch(() => setValid(prev => ({ ...prev, password: false })));
+        setPassword(value);
+        break;
+      default:
+        throw new Error('unsupported input name');
+    }
+  };
+
+  const submitHandler = e => {
+    e.preventDefault();if (!isValid.email) {
+      enqueueSnackbar('Please enter the correct email', {
+        variant: 'error',
+      });
+      return;
+    }
+    if (!isValid.password) {
+      enqueueSnackbar('Please enter the correct password', {
+        variant: 'error',
+      });
+      return;
+    }
     const formEls = e.target.elements;
     const user = {
       email: formEls.email.value,
@@ -37,13 +85,26 @@ export const LoginPage = () => {
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
+          {isAuth ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            <LockOutlinedIcon />
+          )}
         </Avatar>
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <Box
+          component="form"
+          onSubmit={submitHandler}
+          noValidate
+          sx={{ mt: 1 }}
+        >
           <TextField
+            onChange={inputChangeHandler}
+            type="email"
+            value={email}
+            error={!isValid.email}
             margin="normal"
             required
             fullWidth
@@ -54,6 +115,10 @@ export const LoginPage = () => {
             autoFocus
           />
           <TextField
+            onChange={inputChangeHandler}
+            value={password}
+            error={!isValid.password}
+            title="Password must contain at least 8 characters"
             margin="normal"
             required
             fullWidth
@@ -67,6 +132,7 @@ export const LoginPage = () => {
             type="submit"
             fullWidth
             variant="contained"
+            disabled={isAuth}
             sx={{ mt: 3, mb: 2 }}
           >
             Sign In
@@ -80,6 +146,13 @@ export const LoginPage = () => {
           </Grid>
         </Box>
       </Box>
+      {error && (
+        <Alert severity="error">
+          {error !== 'Network Error'
+            ? 'Invalid email or password. Please check and try again.'
+            : error}
+        </Alert>
+      )}
     </Container>
   );
 };

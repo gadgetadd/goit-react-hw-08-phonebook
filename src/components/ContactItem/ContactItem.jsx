@@ -12,6 +12,8 @@ import {
   ListItemButton,
   Box,
   CircularProgress,
+  Tooltip,
+ 
 } from '@mui/material';
 
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
@@ -23,49 +25,54 @@ export const ContactItem = ({ name, number, id }) => {
   const [deleteContact, { isLoading }] = useDeleteContactMutation();
   const dispatch = useDispatch();
   return (
-    <ListItem
-      sx={{ pr: '96px', pl: 0 }}
-      secondaryAction={
-        <Box sx={{ display: 'flex', gap: '10px' }}>
-          <IconButton
-            aria-label="edit"
-            onClick={() => dispatch(openDrawerEdit(id))}
-          >
-            <EditIcon />
-          </IconButton>
-
-          <IconButton
-            edge="end"
-            aria-label="delete"
-            disabled={isLoading}
-            onClick={() =>
-              deleteContact(id)
-                .then(({ data }) => {
-                  enqueueSnackbar(`Contact ${data.name} deleted`, {
-                    variant: 'success',
-                  });
-                })
-                .catch(() =>
-                  enqueueSnackbar('Something went wrong', {
-                    variant: 'error',
-                  })
-                )
-            }
-          >
-            {isLoading ? <CircularProgress size={24} /> : <DeleteIcon />}
-          </IconButton>
-        </Box>
-      }
-    >
-      <ListItemButton href={`tel:${number}`} sx={{ p: 0 }}>
-        <ListItemAvatar>
-          <Avatar>
-            <ContactPhoneIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary={`${name}`} secondary={`${number}`} />
-      </ListItemButton>
-    </ListItem>
+    
+      <ListItem
+        sx={{ pr: '96px', pl: 0 }}
+        secondaryAction={
+          <Box sx={{ display: 'flex', gap: '10px' }}>
+            <Tooltip title="Edit">
+              <IconButton
+                aria-label="edit"
+                onClick={() => dispatch(openDrawerEdit(id))}
+              >
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                disabled={isLoading}
+                onClick={() =>
+                  deleteContact(id)
+                    .then(({ data }) => {
+                      enqueueSnackbar(`Contact ${data.name} deleted`, {
+                        variant: 'success',
+                      });
+                    })
+                    .catch(() =>
+                      enqueueSnackbar('Something went wrong', {
+                        variant: 'error',
+                      })
+                    )
+                }
+              >
+                {isLoading ? <CircularProgress size={24} /> : <DeleteIcon />}
+              </IconButton>
+            </Tooltip>
+          </Box>
+        }
+      >
+        <ListItemButton href={`tel:${number}`} sx={{ p: 0 }}>
+          <ListItemAvatar>
+            <Avatar>
+              <ContactPhoneIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText primary={`${name}`} secondary={`${number}`} />
+        </ListItemButton>
+      </ListItem>
+  
   );
 };
 

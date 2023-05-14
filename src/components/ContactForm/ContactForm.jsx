@@ -32,7 +32,6 @@ export const ContactForm = () => {
   const isLoading = isAdding || isEditing;
   const dispatch = useDispatch();
 
-
   const findContact = contactId => contacts.find(({ id }) => id === contactId);
 
   const [name, setName] = useState(
@@ -150,10 +149,10 @@ export const ContactForm = () => {
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           {isLoading ? (
             <CircularProgress size={24} color="inherit" />
-          ) : drawerVariant === formVariant.new ? (
-            <ContactPageIcon />
-          ) : (
+          ) : drawerVariant === formVariant.edit ? (
             <EditIcon />
+          ) : (
+            <ContactPageIcon />
           )}
         </Avatar>
         <Box
@@ -197,7 +196,16 @@ export const ContactForm = () => {
               ? 'Add new contact'
               : 'Save contact'}
           </Button>
-        </Box>
+        </Box>{' '}
+        <Button
+          type="button"
+          fullWidth
+          variant="outlined"
+          sx={{ mb: 2 }}
+          onClick={() => dispatch(closeDrawer())}
+        >
+          Cancel
+        </Button>
       </Box>
     </Container>
   );

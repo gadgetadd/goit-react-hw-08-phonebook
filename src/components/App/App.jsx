@@ -8,7 +8,8 @@ import { LoginPage, RegisterPage, ContactsPage } from 'pages';
 import { SharedLayout } from 'components/SharedLayout/SharedLayout';
 import { Navigate } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
-import { SnackbarProvider} from 'notistack';
+import { SnackbarProvider } from 'notistack';
+import { Loader } from 'components/Loader/Loader';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ export const App = () => {
       <CssBaseline />
       <SnackbarProvider />
       {isRefreshing ? (
-        <b>Refreshing user...</b>
+        <Loader />
       ) : (
         <Routes>
           <Route path="/" element={<SharedLayout />}>

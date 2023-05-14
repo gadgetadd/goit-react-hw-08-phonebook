@@ -1,6 +1,10 @@
 import { signUp } from 'redux/authOperations';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+
+import { string } from 'yup';
+
 import {
   Container,
   Box,
@@ -10,13 +14,81 @@ import {
   Typography,
   Avatar,
   Link,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import { Link as RouteLink } from 'react-router-dom';
+import { useAuth } from 'hooks/useAuth';
+import { enqueueSnackbar } from 'notistack';
 
 export const RegisterPage = () => {
+  const { error, isAuth } = useAuth();
+  const [isValid, setValid] = useState({
+    firsName: true,
+    lastName: true,
+    email: true,
+    password: true,
+  });
   const dispatch = useDispatch();
-  const handleSubmit = e => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const nameSchema = string()
+    .matches(/^[a-zA-Zа-яіїєґА-ЯІЇЄҐ]+([' -][a-zA-Zа-яіїєґА-ЯІЇЄҐ]*)*$/)
+    .max(35);
+
+  const emailSchema = string().email();
+
+  const passwordSchema = string().matches(/^.{8,}$/);
+
+  const inputChangeHandler = e => {
+    const { name, value } = e.currentTarget;
+    switch (name) {
+      case 'firstName':
+        nameSchema
+          .validate(value)
+          .then(() => setValid(prev => ({ ...prev, firstName: true })))
+          .catch(() => setValid(prev => ({ ...prev, firstName: false })));
+        setFirstName(value);
+        break;
+      case 'lastName':
+        nameSchema
+          .validate(value)
+          .then(() => setValid(prev => ({ ...prev, lastName: true })))
+          .catch(() => setValid(prev => ({ ...prev, lastName: false })));
+        setLastName(value);
+        break;
+      case 'email':
+        emailSchema
+          .validate(value)
+          .then(() => setValid(prev => ({ ...prev, email: true })))
+          .catch(() => setValid(prev => ({ ...prev, email: false })));
+        setEmail(value);
+        break;
+      case 'password':
+        passwordSchema
+          .validate(value)
+          .then(() => setValid(prev => ({ ...prev, password: true })))
+          .catch(() => setValid(prev => ({ ...prev, password: false })));
+        setPassword(value);
+        break;
+      default:
+        throw new Error('unsupported input name');
+    }
+  };
+
+  const submitHandler = e => {
     e.preventDefault();
+    const isValidData =
+      isValid.firsName && isValid.lastName && isValid.email && isValid.password;
+    if (!isValidData) {
+      enqueueSnackbar('Please check the entered data', {
+        variant: 'error',
+      });
+      return;
+    }
     const formEls = e.target.elements;
     const user = {
       name: `${formEls.firstName.value} ${formEls.lastName.value}`,
@@ -38,15 +110,28 @@ export const RegisterPage = () => {
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
+          {isAuth ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            <LockOutlinedIcon />
+          )}
         </Avatar>
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={submitHandler}
+          sx={{ mt: 3 }}
+        >
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
+                onChange={inputChangeHandler}
+                type="text"
+                value={firstName}
+                error={!isValid.firstName}
                 autoComplete="given-name"
                 name="firstName"
                 required
@@ -58,6 +143,10 @@ export const RegisterPage = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                onChange={inputChangeHandler}
+                type="text"
+                value={lastName}
+                error={!isValid.lastName}
                 required
                 fullWidth
                 id="lastName"
@@ -68,6 +157,10 @@ export const RegisterPage = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                onChange={inputChangeHandler}
+                type="email"
+                value={email}
+                error={!isValid.email}
                 required
                 fullWidth
                 id="email"
@@ -78,6 +171,10 @@ export const RegisterPage = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                onChange={inputChangeHandler}
+                value={password}
+                error={!isValid.password}
+                title="Password must contain at least 8 characters"
                 required
                 fullWidth
                 name="password"
@@ -92,6 +189,7 @@ export const RegisterPage = () => {
             type="submit"
             fullWidth
             variant="contained"
+            disabled={isAuth}
             sx={{ mt: 3, mb: 2 }}
           >
             Sign Up
@@ -105,6 +203,13 @@ export const RegisterPage = () => {
           </Grid>
         </Box>
       </Box>
+      {error && (
+        <Alert severity="error">
+          {error !== 'Network Error'
+            ? 'This user is already registered. Please try again with a another email'
+            : error}
+        </Alert>
+      )}
     </Container>
   );
 };
