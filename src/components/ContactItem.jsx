@@ -45,7 +45,7 @@ export default function ContactItem({ name, number, id }) {
                 deleteContact(id)
                   .then(({ data }) => {
                     enqueueSnackbar(`Contact ${data.name} deleted`, {
-                      variant: 'success',
+                      variant: 'info',
                     });
                   })
                   .catch(() =>
