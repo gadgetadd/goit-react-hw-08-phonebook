@@ -2,14 +2,17 @@ import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-
 import { SnackbarProvider } from 'notistack';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import { LoginPage, RegisterPage, ContactsPage } from 'pages';
-import { PrivateRoute, RestrictedRoute } from 'components/Routes';
-import { SharedLayout } from 'components/AppBar';
-import { Loader } from 'components/Loader';
+import LoginPage from 'pages/LoginPage';
+import RegisterPage from 'pages/RegisterPage';
+import ContactsPage from 'pages/ContactsPage';
+import PrivateRoute from './Routes/PrivateRoute';
+import RestrictedRoute from './Routes/RestrictedRoute';
+import AppBar from 'components/AppBar';
+import Loader from 'components/Loader';
+
 import { refreshUser } from 'redux/authOperations';
 import { useAuth } from 'hooks/useAuth';
 
@@ -29,7 +32,7 @@ export default function App() {
         <Loader />
       ) : (
         <Routes>
-          <Route path="/" element={<SharedLayout />}>
+          <Route path="/" element={<AppBar />}>
             <Route index element={<Navigate to={'/contacts'} />} />
             <Route
               path="/register"

@@ -2,8 +2,8 @@ import { Outlet } from 'react-router-dom';
 
 import { Container, AppBar, Box, Toolbar, Typography } from '@mui/material';
 
-import { UserMenu } from 'components/UserMenu';
-import { AuthNav } from 'components/AuthNav/AuthNav';
+import UserMenu from 'components/UserMenu';
+import AuthNav from 'components/AuthNav/AuthNav';
 import { useAuth } from 'hooks/useAuth';
 
 export default function SharedLayout() {

@@ -10,10 +10,10 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { ContactForm } from 'components/ContactForm';
-import { ContactList } from 'components/ContactList';
-import { Filter } from 'components/Filter';
-import { Loader } from 'components/Loader';
+import ContactForm from 'components/ContactForm';
+import ContactList from 'components/ContactList';
+import Filter from 'components/Filter';
+import Loader from 'components/Loader';
 
 import { openDrawerNew, closeDrawer } from 'redux/drawerSlice';
 import { useFetchContactsQuery } from 'redux/contactsApi';

@@ -1,9 +1,9 @@
 import { useSelector } from 'react-redux';
 import { List } from '@mui/material';
 
+import  ContactItem  from 'components/ContactItem';
 import { useFetchContactsQuery } from 'redux/contactsApi';
 import { selectFilter } from 'redux/selectors';
-import { ContactItem } from 'components/ContactItem';
 
 export default function ContactList() {
   const { data = [] } = useFetchContactsQuery();
