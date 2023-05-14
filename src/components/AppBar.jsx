@@ -1,15 +1,12 @@
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-
-import { Container } from '@mui/material';
-
-import { useAuth } from 'hooks/useAuth';
-import { UserMenu } from 'components/UserMenu/UserMenu';
-import { AuthNav } from 'components/AuthNav/AuthNav';
 import { Outlet } from 'react-router-dom';
-export const SharedLayout = () => {
+
+import { Container, AppBar, Box, Toolbar, Typography } from '@mui/material';
+
+import { UserMenu } from 'components/UserMenu';
+import { AuthNav } from 'components/AuthNav/AuthNav';
+import { useAuth } from 'hooks/useAuth';
+
+export default function SharedLayout() {
   const { isLoggedIn } = useAuth();
 
   return (
@@ -36,4 +33,4 @@ export const SharedLayout = () => {
       </Container>
     </>
   );
-};
+}

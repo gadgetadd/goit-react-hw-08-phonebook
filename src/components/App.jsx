@@ -1,17 +1,19 @@
-import { Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useAuth } from 'hooks/useAuth';
-import { refreshUser } from 'redux/authOperations';
-import { PrivateRoute, RestrictedRoute } from 'components/Routes';
-import { LoginPage, RegisterPage, ContactsPage } from 'pages';
-import { SharedLayout } from 'components/SharedLayout/SharedLayout';
 import { Navigate } from 'react-router-dom';
-import CssBaseline from '@mui/material/CssBaseline';
-import { SnackbarProvider } from 'notistack';
-import { Loader } from 'components/Loader/Loader';
 
-export const App = () => {
+import { SnackbarProvider } from 'notistack';
+import CssBaseline from '@mui/material/CssBaseline';
+
+import { LoginPage, RegisterPage, ContactsPage } from 'pages';
+import { PrivateRoute, RestrictedRoute } from 'components/Routes';
+import { SharedLayout } from 'components/AppBar';
+import { Loader } from 'components/Loader';
+import { refreshUser } from 'redux/authOperations';
+import { useAuth } from 'hooks/useAuth';
+
+export default function App() {
   const dispatch = useDispatch();
   const { isRefreshing } = useAuth();
 
@@ -62,4 +64,4 @@ export const App = () => {
       )}
     </>
   );
-};
+}

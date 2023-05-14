@@ -1,8 +1,10 @@
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
+
 import { Link } from './AuthNav.styled';
-export const AuthNav = () => {
+
+export default function AuthNav() {
   return (
     <Box
       sx={{
@@ -28,4 +30,4 @@ export const AuthNav = () => {
       </ButtonGroup>
     </Box>
   );
-};
+}

@@ -1,14 +1,12 @@
 import { useSelector } from 'react-redux';
+import { List } from '@mui/material';
 
 import { useFetchContactsQuery } from 'redux/contactsApi';
 import { selectFilter } from 'redux/selectors';
+import { ContactItem } from 'components/ContactItem';
 
-import { ContactItem } from 'components/ContactItem/ContactItem';
-
-import { List } from '@mui/material';
-export const ContactList = () => {
+export default function ContactList() {
   const { data = [] } = useFetchContactsQuery();
-
   const filter = useSelector(selectFilter);
 
   const visibleContacts = data.filter(contact =>
@@ -18,10 +16,8 @@ export const ContactList = () => {
   return (
     <List>
       {visibleContacts.map(contact => (
-      
-          <ContactItem key={contact.id} {...contact} />
-        
+        <ContactItem key={contact.id} {...contact} />
       ))}
     </List>
   );
-};
+}

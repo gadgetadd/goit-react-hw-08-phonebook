@@ -8,21 +8,23 @@ import {
   AlertTitle,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { ContactForm } from 'components/ContactForm';
+import { ContactList } from 'components/ContactList';
+import { Filter } from 'components/Filter';
+import { Loader } from 'components/Loader';
+
+import { openDrawerNew, closeDrawer } from 'redux/drawerSlice';
 import { useFetchContactsQuery } from 'redux/contactsApi';
 import { selectisDrawerOpen } from 'redux/selectors';
-import { openDrawerNew, closeDrawer } from 'redux/drawerSlice';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { ContactForm } from 'components/ContactForm/ContactForm';
-import { ContactList } from 'components/ContactList/ContactList';
-import { Filter } from 'components/Filter/Filter';
-import { Loader } from 'components/Loader/Loader';
 
-export const ContactsPage = () => {
+export default function ContactsPage() {
   const isDrawerOpen = useSelector(selectisDrawerOpen);
   const dispatch = useDispatch();
   const { data = [], isError, isLoading } = useFetchContactsQuery();
   const isMobile = useMediaQuery('(max-width:786px)');
+
   return (
     <Container component="main">
       {isLoading && <Loader />}
@@ -49,7 +51,6 @@ export const ContactsPage = () => {
           </>
         )
       )}
-
       <Drawer
         anchor={isMobile ? 'top' : 'bottom'}
         open={isDrawerOpen}
@@ -71,4 +72,4 @@ export const ContactsPage = () => {
       </Fab>
     </Container>
   );
-};
+}

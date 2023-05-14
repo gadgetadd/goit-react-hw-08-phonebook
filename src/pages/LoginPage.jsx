@@ -1,10 +1,9 @@
-import { logIn } from 'redux/authOperations';
-import { string } from 'yup';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Link as RouteLink } from 'react-router-dom';
+import { string } from 'yup';
 import { enqueueSnackbar } from 'notistack';
 
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import {
   Container,
   Avatar,
@@ -17,10 +16,12 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
-import { Link as RouteLink } from 'react-router-dom';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+
+import { logIn } from 'redux/authOperations';
 import { useAuth } from 'hooks/useAuth';
 
-export const LoginPage = () => {
+export default function LoginPage() {
   const { error, isAuth } = useAuth();
   const [isValid, setValid] = useState({ email: true, password: true });
   const dispatch = useDispatch();

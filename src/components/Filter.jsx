@@ -1,9 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { TextField } from '@mui/material';
+
 import { selectFilter } from 'redux/selectors';
 import { setFilter } from 'redux/filterSlice';
 
-export const Filter = () => {
+export default function Filter() {
   const filter = useSelector(selectFilter);
   const dispatch = useDispatch();
 
@@ -22,4 +23,4 @@ export const Filter = () => {
       onChange={filterHandler}
     />
   );
-};
+}

@@ -1,16 +1,5 @@
 import { useState } from 'react';
-import { enqueueSnackbar } from 'notistack';
 import { useSelector, useDispatch } from 'react-redux';
-import { closeDrawer } from 'redux/drawerSlice';
-import { string } from 'yup';
-import { selectDrawerVariant, selectIdToEdit } from 'redux/selectors';
-import ContactPageIcon from '@mui/icons-material/ContactPage';
-import EditIcon from '@mui/icons-material/Edit';
-import {
-  useAddContactMutation,
-  useEditContactMutation,
-  useFetchContactsQuery,
-} from 'redux/contactsApi';
 
 import {
   Box,
@@ -20,11 +9,22 @@ import {
   Avatar,
   CircularProgress,
 } from '@mui/material';
+import ContactPageIcon from '@mui/icons-material/ContactPage';
+import EditIcon from '@mui/icons-material/Edit';
+import { enqueueSnackbar } from 'notistack';
+import { string } from 'yup';
 
-export const ContactForm = () => {
+import { closeDrawer } from 'redux/drawerSlice';
+import { selectDrawerVariant, selectIdToEdit } from 'redux/selectors';
+import {
+  useAddContactMutation,
+  useEditContactMutation,
+  useFetchContactsQuery,
+} from 'redux/contactsApi';
+
+export default function ContactForm() {
   const drawerVariant = useSelector(selectDrawerVariant);
   const contactId = useSelector(selectIdToEdit);
-
   const [isValid, setValid] = useState({ name: true, number: true });
   const { data: contacts } = useFetchContactsQuery();
   const [addContact, { isLoading: isAdding }] = useAddContactMutation();
@@ -32,6 +32,10 @@ export const ContactForm = () => {
   const isLoading = isAdding || isEditing;
   const dispatch = useDispatch();
 
+  const formVariant = {
+    new: 'new',
+    edit: 'edit',
+  };
   const findContact = contactId => contacts.find(({ id }) => id === contactId);
 
   const [name, setName] = useState(
@@ -40,11 +44,6 @@ export const ContactForm = () => {
   const [number, setNumber] = useState(
     contactId ? findContact(contactId).number : ''
   );
-
-  const formVariant = {
-    new: 'new',
-    edit: 'edit',
-  };
 
   const nameSchema = string()
     .matches(/^[a-zA-Zа-яіїєґА-ЯІЇЄҐ]+([' -][a-zA-Zа-яіїєґА-ЯІЇЄҐ]*)*$/)
@@ -64,7 +63,6 @@ export const ContactForm = () => {
           .validate(value)
           .then(() => setValid(prev => ({ ...prev, name: true })))
           .catch(() => setValid(prev => ({ ...prev, name: false })));
-
         setName(value);
         break;
       case 'number':
@@ -72,7 +70,6 @@ export const ContactForm = () => {
           .validate(value)
           .then(() => setValid(prev => ({ ...prev, number: true })))
           .catch(() => setValid(prev => ({ ...prev, number: false })));
-
         setNumber(value);
         break;
       default:
@@ -209,4 +206,4 @@ export const ContactForm = () => {
       </Box>
     </Container>
   );
-};
+}

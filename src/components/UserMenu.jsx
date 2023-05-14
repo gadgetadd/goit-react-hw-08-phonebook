@@ -1,20 +1,23 @@
-import { useDispatch } from 'react-redux';
 import { useState } from 'react';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { logOut } from 'redux/authOperations';
-import { useAuth } from 'hooks/useAuth';
+import { useDispatch } from 'react-redux';
+
 import {
   Typography,
   IconButton,
   Menu,
   MenuItem,
   ListItemIcon,
+  CircularProgress,
 } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { AccountCircle, Logout } from '@mui/icons-material';
 
-export const UserMenu = () => {
+import { logOut } from 'redux/authOperations';
+import { useAuth } from 'hooks/useAuth';
+
+export default function UserMenu() {
   const dispatch = useDispatch();
-  const { user } = useAuth();
+  const { user, isAuth } = useAuth();
   const isMobile = useMediaQuery('(max-width:768px)');
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -56,11 +59,15 @@ export const UserMenu = () => {
       >
         <MenuItem onClick={() => dispatch(logOut())}>
           <ListItemIcon>
-            <Logout fontSize="small" />
+            {isAuth ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              <Logout fontSize="small" />
+            )}
           </ListItemIcon>
           Logout
         </MenuItem>
       </Menu>
     </>
   );
-};
+}

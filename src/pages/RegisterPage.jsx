@@ -1,8 +1,7 @@
-import { signUp } from 'redux/authOperations';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-
+import { Link as RouteLink } from 'react-router-dom';
+import { enqueueSnackbar } from 'notistack';
 import { string } from 'yup';
 
 import {
@@ -17,11 +16,12 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
-import { Link as RouteLink } from 'react-router-dom';
-import { useAuth } from 'hooks/useAuth';
-import { enqueueSnackbar } from 'notistack';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-export const RegisterPage = () => {
+import { signUp } from 'redux/authOperations';
+import { useAuth } from 'hooks/useAuth';
+
+export default function RegisterPage() {
   const { error, isAuth } = useAuth();
   const [isValid, setValid] = useState({
     firsName: true,
@@ -95,7 +95,6 @@ export const RegisterPage = () => {
       email: formEls.email.value,
       password: formEls.password.value,
     };
-
     dispatch(signUp(user));
   };
 
