@@ -1,9 +1,11 @@
+import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { Container, AppBar, Box, Toolbar, Typography } from '@mui/material';
 
 import UserMenu from 'components/UserMenu';
 import AuthNav from 'components/AuthNav/AuthNav';
+import Loader from './Loader';
 import { useAuth } from 'hooks/useAuth';
 
 export default function SharedLayout() {
@@ -29,7 +31,9 @@ export default function SharedLayout() {
         </AppBar>
       </Box>
       <Container maxWidth="lg">
-        <Outlet />{' '}
+        <Suspense fallback={<Loader/>}>
+          <Outlet />
+        </Suspense>
       </Container>
     </>
   );

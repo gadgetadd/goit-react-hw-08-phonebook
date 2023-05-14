@@ -1,13 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import LoginPage from 'pages/LoginPage';
-import RegisterPage from 'pages/RegisterPage';
-import ContactsPage from 'pages/ContactsPage';
 import PrivateRoute from './Routes/PrivateRoute';
 import RestrictedRoute from './Routes/RestrictedRoute';
 import AppBar from 'components/AppBar';
@@ -15,6 +12,10 @@ import Loader from 'components/Loader';
 
 import { refreshUser } from 'redux/authOperations';
 import { useAuth } from 'hooks/useAuth';
+
+const LoginPage = lazy(() => import('pages/LoginPage'));
+const RegisterPage = lazy(() => import('pages/RegisterPage'));
+const ContactsPage = lazy(() => import('pages/ContactsPage'));
 
 export default function App() {
   const dispatch = useDispatch();
