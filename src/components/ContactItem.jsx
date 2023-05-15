@@ -16,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { enqueueSnackbar } from 'notistack';
 
-import { openDrawerEdit } from 'redux/drawerSlice';
+import { openDrawerEdit } from 'redux/modalSlice';
 import { useDeleteContactMutation } from 'redux/contactsApi';
 
 export default function ContactItem({ name, number, id }) {

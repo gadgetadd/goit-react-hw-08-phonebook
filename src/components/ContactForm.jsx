@@ -14,7 +14,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { enqueueSnackbar } from 'notistack';
 import { string } from 'yup';
 
-import { closeDrawer } from 'redux/drawerSlice';
+import { closeDrawer } from 'redux/modalSlice';
 import { selectDrawerVariant, selectIdToEdit } from 'redux/selectors';
 import {
   useAddContactMutation,
@@ -204,7 +204,7 @@ export default function ContactForm() {
         >
           Cancel
         </Button>
-      </Box>
+      </Box>    
     </Container>
   );
 }

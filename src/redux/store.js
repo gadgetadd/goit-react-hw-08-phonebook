@@ -12,10 +12,10 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import authReducer  from './authSlice';
+import authReducer from './authSlice';
 import filterReducer from './filterSlice'
 import contactsApi from './contactsApi'
-import drawerReducer from './drawerSlice';
+import modalReducer from './modalSlice';
 
 const authPersistConfig = {
     key: 'auth',
@@ -28,7 +28,7 @@ export const store = configureStore({
         auth: persistReducer(authPersistConfig, authReducer),
         [contactsApi.reducerPath]: contactsApi.reducer,
         filter: filterReducer,
-        drawer: drawerReducer,
+        modal: modalReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

@@ -10,11 +10,13 @@ export const selectIsRefreshing = state => state.auth.isRefreshing;
 
 export const selectError = state => state.auth.error;
 
-export const selectisDrawerOpen = state => state.drawer.isOpen;
+export const selectIsDrawerOpen = state => state.modal.isDrawerOpen;
 
-export const selectDrawerVariant = state => state.drawer.variant;
+export const selectIsDialogOpen = state => state.modal.isDialogOpen;
 
-export const selectIdToEdit = state => state.drawer.idToEdit;
+export const selectDrawerVariant = state => state.modal.variant;
+
+export const selectIdToEdit = state => state.modal.idToEdit;
 
 
 

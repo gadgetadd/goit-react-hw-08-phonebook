@@ -14,16 +14,26 @@ import ContactForm from 'components/ContactForm';
 import ContactList from 'components/ContactList';
 import Filter from 'components/Filter';
 import Loader from 'components/Loader';
+import Dialog from 'components/Dialog';
 
-import { openDrawerNew, closeDrawer } from 'redux/drawerSlice';
+import { openDrawerNew, closeDrawer, openDialog } from 'redux/modalSlice';
 import { useFetchContactsQuery } from 'redux/contactsApi';
-import { selectisDrawerOpen } from 'redux/selectors';
+import { selectIsDrawerOpen } from 'redux/selectors';
 
 export default function ContactsPage() {
-  const isDrawerOpen = useSelector(selectisDrawerOpen);
+  const isDrawerOpen = useSelector(selectIsDrawerOpen);
   const dispatch = useDispatch();
   const { data = [], isError, isLoading } = useFetchContactsQuery();
   const isMobile = useMediaQuery('(max-width:786px)');
+
+  const handleAccidentalClicks = (_, reason) => {
+    if (reason === 'escapeKeyDown' || reason === 'backdropClick') {
+      dispatch(openDialog());
+      return;
+    }
+    console.log(reason);
+    dispatch(closeDrawer());
+  };
 
   return (
     <Container component="main">
@@ -54,7 +64,7 @@ export default function ContactsPage() {
       <Drawer
         anchor={isMobile ? 'top' : 'bottom'}
         open={isDrawerOpen}
-        onClose={() => dispatch(closeDrawer())}
+        ModalProps={{ onClose: handleAccidentalClicks }}
       >
         <ContactForm />
       </Drawer>
@@ -70,6 +80,7 @@ export default function ContactsPage() {
       >
         <AddIcon />
       </Fab>
+      <Dialog />
     </Container>
   );
 }
