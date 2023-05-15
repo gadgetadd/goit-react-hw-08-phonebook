@@ -13,6 +13,11 @@ const initialState = {
 const authSlice = createSlice({
     name: 'auth',
     initialState,
+    reducers: {
+        clearError(state) {
+            state.error = null
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(signUp.fulfilled, (state, action) => {
@@ -67,5 +72,7 @@ const authSlice = createSlice({
 
     }
 })
+
+export const { clearError } = authSlice.actions
 
 export default authSlice.reducer;

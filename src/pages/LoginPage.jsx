@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link as RouteLink } from 'react-router-dom';
 import { string } from 'yup';
@@ -20,6 +20,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 import { logIn } from 'redux/authOperations';
 import { useAuth } from 'hooks/useAuth';
+import { clearError } from 'redux/authSlice';
 
 export default function LoginPage() {
   const { error, isAuth } = useAuth();
@@ -31,6 +32,12 @@ export default function LoginPage() {
   const emailSchema = string().email();
 
   const passwordSchema = string().matches(/^.{8,}$/);
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
 
   const inputChangeHandler = e => {
     const { name, value } = e.currentTarget;
@@ -55,7 +62,8 @@ export default function LoginPage() {
   };
 
   const submitHandler = e => {
-    e.preventDefault();if (!isValid.email) {
+    e.preventDefault();
+    if (!isValid.email) {
       enqueueSnackbar('Please enter the correct email', {
         variant: 'error',
       });
@@ -156,4 +164,4 @@ export default function LoginPage() {
       )}
     </Container>
   );
-};
+}

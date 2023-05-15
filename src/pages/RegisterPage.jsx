@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link as RouteLink } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
@@ -20,6 +20,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 import { signUp } from 'redux/authOperations';
 import { useAuth } from 'hooks/useAuth';
+import { clearError } from 'redux/authSlice';
 
 export default function RegisterPage() {
   const { error, isAuth } = useAuth();
@@ -42,6 +43,12 @@ export default function RegisterPage() {
   const emailSchema = string().email();
 
   const passwordSchema = string().matches(/^.{8,}$/);
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
 
   const inputChangeHandler = e => {
     const { name, value } = e.currentTarget;
