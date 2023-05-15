@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
@@ -36,7 +36,13 @@ export default function ContactForm() {
     new: 'new',
     edit: 'edit',
   };
+
+  const isNew = drawerVariant === formVariant.new;
+  const isEdit = drawerVariant === formVariant.edit;
+
   const findContact = contactId => contacts.find(({ id }) => id === contactId);
+
+  const prevContact = useRef(isEdit ? findContact(contactId) : null);
 
   const [name, setName] = useState(
     contactId ? findContact(contactId).name : ''
@@ -96,16 +102,19 @@ export default function ContactForm() {
       return;
     }
 
-    if (drawerVariant === formVariant.new) {
-      const isExists = contacts.some(
-        contact => contact.name.toLowerCase() === name.toLowerCase()
-      );
-      if (isExists) {
-        enqueueSnackbar(`${name} is already in contacts`, {
-          variant: 'warning',
-        });
-        return;
-      }
+    const isExists = contacts.some(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+    const isSame =
+      prevContact?.current?.name?.toLowerCase() === name.toLowerCase();
+    if (isExists && !isSame) {
+      enqueueSnackbar(`${name} is already in contacts`, {
+        variant: 'warning',
+      });
+      return;
+    }
+
+    if (isNew) {
       addContact({ name, number })
         .then(({ data }) => {
           dispatch(closeDrawer());
@@ -119,7 +128,7 @@ export default function ContactForm() {
           })
         );
     }
-    if (drawerVariant === formVariant.edit) {
+    if (isEdit) {
       editContact([contactId, { name, number }])
         .then(({ data }) => {
           dispatch(closeDrawer());
@@ -147,7 +156,7 @@ export default function ContactForm() {
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           {isLoading ? (
             <CircularProgress size={24} color="inherit" />
-          ) : drawerVariant === formVariant.edit ? (
+          ) : isEdit ? (
             <EditIcon />
           ) : (
             <ContactPageIcon />
@@ -190,9 +199,7 @@ export default function ContactForm() {
             sx={{ mt: 3, mb: 2 }}
             disabled={isLoading}
           >
-            {drawerVariant === formVariant.new
-              ? 'Add new contact'
-              : 'Save contact'}
+            {isNew ? 'Add new contact' : 'Save contact'}
           </Button>
         </Box>{' '}
         <Button
@@ -204,7 +211,7 @@ export default function ContactForm() {
         >
           Cancel
         </Button>
-      </Box>    
+      </Box>
     </Container>
   );
 }

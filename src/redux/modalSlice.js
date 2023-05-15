@@ -17,6 +17,7 @@ const modalSlice = createSlice({
         closeDrawer: (state) => {
             state.isDrawerOpen = false;
             state.variant = null;
+            state.idToEdit = null;
         },
         openDialog: (state) => {
             state.isDialogOpen = true;

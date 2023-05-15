@@ -31,7 +31,6 @@ export default function ContactsPage() {
       dispatch(openDialog());
       return;
     }
-    console.log(reason);
     dispatch(closeDrawer());
   };
 
