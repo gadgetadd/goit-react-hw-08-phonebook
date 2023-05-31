@@ -89,7 +89,10 @@ export default function RegisterPage() {
   const submitHandler = e => {
     e.preventDefault();
     const isValidData =
-      isValid.firsName && isValid.lastName && isValid.email && isValid.password;
+      isValid.firstName &&
+      isValid.lastName &&
+      isValid.email &&
+      isValid.password;
     if (!isValidData) {
       enqueueSnackbar('Please check the entered data', {
         variant: 'error',
