@@ -42,7 +42,7 @@ export default function RegisterPage() {
 
   const emailSchema = string().email();
 
-  const passwordSchema = string().matches(/^.{8,}$/);
+  const passwordSchema = string().min(8);
 
   useEffect(() => {
     return () => {
